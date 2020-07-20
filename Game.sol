@@ -15,6 +15,9 @@ contract Game {
     //owner's address
     address owner;
     
+    // Pausable Contract
+    bool isContractPaused;
+    
     // rng contract's address    
     address public  BeaconContractAddress = 0x79474439753C7c70011C3b00e06e559378bAD040;
     
@@ -87,6 +90,7 @@ contract Game {
     */ 
    
    function depositInBankRoll() public payable onlyOwner {
+       require(isContractPaused == false);
        require(msg.value != 0 ether);
    }
    
@@ -103,6 +107,7 @@ contract Game {
     */ 
     
    function checkBet(uint contestNumber,address better) internal view returns(bool success){
+       require(isContractPaused == false);
        for(uint i=0;i<BetDetails[contestNumber].length;i++){
            if(BetDetails[contestNumber][i].userAddress == better){
                return false;
@@ -137,6 +142,7 @@ contract Game {
     */ 
    
    function bet(uint choosenNumber ) payable public {
+       require(isContractPaused == false);
        require(choosenNumber>=0 && choosenNumber<=9,"Please Choose Number Between 0 and 9!");
        require(msg.value >= 0.2 ether , "Please Enter Amount Greater than 0.2 ether");
        gameCounter++;
@@ -172,6 +178,7 @@ contract Game {
     */ 
    
    function withdraw() public returns (bool success){
+       require(isContractPaused == false);
        require(UserDetails[msg.sender] > 0 , "Whoops! You are trying to withdraw zero ETH");
        require(UserDetails[msg.sender]<address(this).balance,"Please try again, Bankroll is out of Balance");
        uint amount = UserDetails[msg.sender];
@@ -182,7 +189,6 @@ contract Game {
    }
    
    
-    
     
     
     
