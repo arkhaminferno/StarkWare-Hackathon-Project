@@ -16,21 +16,22 @@ contract Game {
         _;
     }
     
-    struct User{
-        address userAddress;
-        uint amountWon;
-    }
+   
     
     struct BetDetail {
         address userAddress;
         uint numberChoosen;
         uint betAmount;
+    
     }
     
-    mapping(address=>User) public userDetail;
+    
+     
+    mapping(address=>uint) private UserDetails;
+    
     mapping(uint=>address) public winnerForaGame; // check who was the winner for a specific game
     
-    mapping(uint=>BetDetail) public BetDetails;
+    mapping(uint=>BetDetail[]) public BetDetails;
     
     
     event depositMade(address indexed ,uint amount,uint choosenNumber);
@@ -46,28 +47,32 @@ contract Game {
        return address(this).balance;
    }
    
+   function checkBet(uint contestNumber,address better) internal returns(bool success){
+       for(uint i=0;i<BetDetails[contestNumber].length;i++){
+           if(BetDetails[contestNumber][i].userAddress == better){
+               return false;
+               revert("you have already participated this contest");
+           }
+           else{
+               return true;
+           }
+       }
+   }
+   
+   
    
    function bet(uint choosenNumber ) payable public {
        require(choosenNumber>=0 && choosenNumber<=9,"Please Choose Number Between 0 and 9!");
        require(msg.value >= 0.2 ether , "Please Enter Amount Greater than 0.2 ether");
-       /* TODO 
-       * check whether a user already in game or not 
-        require(msg.sender,"You have already participated for the game");
-       */
        gameCounter++;
+       require(checkBet(gameCounter,msg.sender) == true);
+       
        BetDetail memory newBet;
        newBet.userAddress = msg.sender;
        newBet.numberChoosen = choosenNumber;
        newBet.betAmount = msg.value;
        
-       /* TODO
-       * store bet details for the game in the Betdetails mapping
-       and store user detials in the user struct as well
-       * Betdetails[gameCounter] =   newBet;
-       */
-       
-       
-       
+       BetDetails[gameCounter].push(newBet);
        delete newBet;
        
        /* TODO
@@ -86,12 +91,13 @@ contract Game {
        
    }
    
-   function withdraw() public {
-       /* TODO
-       * check user Amount is greater than 0 or not in to the USer struct
-       * check withdraw amount is lesser than bankroll's amount
-       * if all conditiin satisfies then withdraw all the balance 
-       */
+   function withdraw() public returns (bool success){
+       require(UserDetails[msg.sender] > 0 , "Whoops! You are trying to withdraw zero ETH");
+       require(UserDetails[msg.sender]<address(this).balance,"Please try again, Bankroll is out of Balance");
+       uint amount = UserDetails[msg.sender];
+       UserDetails[msg.sender] = 0;
+       msg.sender.transfer(amount);
+       return true;
    }
    
    
