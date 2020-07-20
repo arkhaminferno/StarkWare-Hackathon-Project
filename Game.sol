@@ -189,6 +189,10 @@ contract Game {
    }
    
    
+   function PauseContract() public onlyOwner returns(bool success){
+       isContractPaused = true;
+       return true;
+   }
     
     
     
