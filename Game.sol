@@ -131,9 +131,12 @@ contract Game {
      /** @dev Generate Random Number using Beacon Contract
     */ 
     
-   function generateRandomNumber() public view returns (uint256, bytes32) {
+   function generateRandomNumber() public view returns ( bytes32) {
+       uint blockNumber;
+       bytes32 randomNumber;
        Beacon beacon = Beacon(BeaconContractAddress);
-       return beacon.getLatestRandomness();
+       (blockNumber,randomNumber) = beacon.getLatestRandomness();
+       return randomNumber;
        
    }
    
@@ -162,11 +165,11 @@ contract Game {
        
        
        /* TODO
-       * if number number of bets for a match has been full. generate random number else not
+       * if number number of bets for a match has been full generate random number else not
        */
        
        /* TODO 
-       * if user is the winner then store the winning amount into User mapping
+       * if user is the winner then store the winning amount into User structs
        */
        
        
