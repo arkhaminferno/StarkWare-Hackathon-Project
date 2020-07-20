@@ -1,5 +1,8 @@
 pragma solidity ^0.5.2;
 
+contract Beacon{
+    function getLatestRandomness() external view returns (uint256, bytes32) { }
+}
 
 contract Game {
     
@@ -13,7 +16,7 @@ contract Game {
     address owner;
     
     // rng contract's address    
-    address BeaconContract;
+    address public  BeaconContractAddress = 0x79474439753C7c70011C3b00e06e559378bAD040;
     
     // Number of Contests happened
     uint public gameCounter;
@@ -81,7 +84,6 @@ contract Game {
     
      
    /** @dev Store some ether into the bankRollBalance
-    * @param amount of ether
     */ 
    
    function depositInBankRoll() public payable onlyOwner {
@@ -98,11 +100,9 @@ contract Game {
    
     
    /** @dev Checking whether user already exists on the game or not
-    * @param contest Number
-    * @param address of the user/better
     */ 
     
-   function checkBet(uint contestNumber,address better) internal returns(bool success){
+   function checkBet(uint contestNumber,address better) internal view returns(bool success){
        for(uint i=0;i<BetDetails[contestNumber].length;i++){
            if(BetDetails[contestNumber][i].userAddress == better){
                return false;
@@ -116,26 +116,24 @@ contract Game {
    
    
      /** @dev Set Beacon Contract's Address
-    * @param Beacon Contract Address
     */ 
     
    function setBeaconContractAddress(address _address) public onlyOwner {
-       BeaconContract = _address;
+       BeaconContractAddress = _address;
    }
    
    
      /** @dev Generate Random Number using Beacon Contract
     */ 
     
-   function generateRandomNumber() internal returns (uint) {
-       
+   function generateRandomNumber() internal view returns (uint256, bytes32) {
+       Beacon beacon = Beacon(BeaconContractAddress);
+       return beacon.getLatestRandomness();
        
    }
    
    
      /** @dev Bet Amount 
-    * @param input number between 0 to 9
-    * @param input amount of ether
     */ 
    
    function bet(uint choosenNumber ) payable public {
