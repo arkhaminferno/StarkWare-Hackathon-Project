@@ -131,7 +131,7 @@ contract Game {
      /** @dev Generate Random Number using Beacon Contract
     */ 
     
-   function generateRandomNumber() internal view returns (uint256, bytes32) {
+   function generateRandomNumber() public view returns (uint256, bytes32) {
        Beacon beacon = Beacon(BeaconContractAddress);
        return beacon.getLatestRandomness();
        
