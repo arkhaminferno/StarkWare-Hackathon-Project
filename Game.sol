@@ -13,7 +13,7 @@ contract Game {
 //=============================================================================
 
     //owner's address
-    address public owner;
+    address payable owner;
     
     // Pausable Contract
     bool isContractPaused;
@@ -181,16 +181,11 @@ contract Game {
        emit depositMade(msg.sender,msg.value,choosenNumber);
        
        
-       /* TODO
-       * if number number of bets for a match has been full generate random number else not
-       */
-       
        if(BetDetails[gameCounter].length == 10){
            uint generatedNumber = generateRandomNumber();
             address winner = pickWinner(generatedNumber,gameCounter);
        
        winnerForaGame[gameCounter] = winner;
-       uint Am = 0.5 ether;
        UserDetails[winner] += 0.5 ether;
        owner.transfer(0.5 ether);
        gameCounter++;
