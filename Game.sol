@@ -37,9 +37,12 @@ contract Game {
     // Bet Details for a specific contest
     mapping(uint=>BetDetail[]) public BetDetails;
     
+    // lock timestamp
+    uint locktimestamp;
+    
     
     // Bet Detail Struct
-    struct BetDetail {
+    struct BetDetail  {
         address userAddress;
         uint numberChoosen;
         uint betAmount;
@@ -67,6 +70,7 @@ contract Game {
     
     constructor() public{
         owner = msg.sender;
+        locktimestamp = now;
     }
     
 
@@ -162,16 +166,17 @@ contract Game {
     */ 
    
    function bet(uint choosenNumber ) payable public returns (bool success){
-       require(isContractPaused == false);
+       require(isContractPaused == false,"Contract is paused please try again in some time");
+       require(now > locktimestamp);
        require(choosenNumber>=0 && choosenNumber<=9,"Please Choose Number Between 0 and 9!");
-       require(msg.value == 0.1 ether , "Please Enter Amount Greater than 0.1 ether");
+       require(msg.value == 0.1 ether , "Please Enter Amount equal to 0.1 ether");
       
        require(checkBet(gameCounter,choosenNumber) == true);
        
-       BetDetail memory newBet;
+       BetDetail memory  newBet;
        newBet.userAddress = msg.sender;
        newBet.numberChoosen = choosenNumber;
-       newBet.betAmount = msg.value;
+       newBet.betAmount  = msg.value;
        
        BetDetails[gameCounter].push(newBet);
        
@@ -190,6 +195,8 @@ contract Game {
        UserDetails[winner] += 0.7 ether;
        owner.transfer(0.3 ether);
        gameCounter++;
+       locktimestamp = now + 1 hours;
+       isContractPaused = true;
        return true;
            
        }
