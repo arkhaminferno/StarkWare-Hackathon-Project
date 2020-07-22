@@ -235,6 +235,10 @@ contract Game {
    }
     
     
+    function unPauseContract() public onlyOwner returns(bool success){
+        isContractPaused =false;
+        return true;
+    }
     
     
 }
