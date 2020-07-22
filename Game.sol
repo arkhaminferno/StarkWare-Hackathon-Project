@@ -173,7 +173,7 @@ contract Game {
    
    function bet(uint choosenNumber ) payable public timestampCheck returns (bool success){
        require(isContractPaused == false,"Contract is paused please try again in some time");
-       
+       require(msg.sender != owner);
        require(choosenNumber>=0 && choosenNumber<=9,"Please Choose Number Between 0 and 9!");
        require(msg.value == 0.1 ether , "Please Enter Amount equal to 0.1 ether");
       
