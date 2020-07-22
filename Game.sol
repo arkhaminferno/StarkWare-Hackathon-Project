@@ -43,7 +43,7 @@ contract Game {
     
     // Bet Detail Struct
     struct BetDetail  {
-        address userAddress;
+        address payable userAddress;
         uint numberChoosen;
         uint betAmount;
     
@@ -68,7 +68,7 @@ contract Game {
 //=============================================================================
     
     
-    constructor() public{
+    constructor() public payable{
         owner = msg.sender;
         locktimestamp = now;
     }
