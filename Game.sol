@@ -164,7 +164,7 @@ contract Game {
    function bet(uint choosenNumber ) payable public returns (bool success){
        require(isContractPaused == false);
        require(choosenNumber>=0 && choosenNumber<=9,"Please Choose Number Between 0 and 9!");
-       require(msg.value >= 0.2 ether , "Please Enter Amount Greater than 0.2 ether");
+       require(msg.value == 0.1 ether , "Please Enter Amount Greater than 0.1 ether");
       
        require(checkBet(gameCounter,choosenNumber) == true);
        
@@ -183,11 +183,12 @@ contract Game {
        
        if(BetDetails[gameCounter].length == 10){
            uint generatedNumber = generateRandomNumber();
-            address winner = pickWinner(generatedNumber,gameCounter);
+           uint lastDigitofGeneratedNumber = generatedNumber%10;
+            address winner = pickWinner(lastDigitofGeneratedNumber,gameCounter);
        
        winnerForaGame[gameCounter] = winner;
-       UserDetails[winner] += 0.5 ether;
-       owner.transfer(0.5 ether);
+       UserDetails[winner] += 0.7 ether;
+       owner.transfer(0.3 ether);
        gameCounter++;
        return true;
            
@@ -205,7 +206,6 @@ contract Game {
     */ 
    
    function withdraw() public returns (bool success){
-       require(isContractPaused == false);
        require(UserDetails[msg.sender] > 0 , "Whoops! You are trying to withdraw zero ETH");
        require(UserDetails[msg.sender]<address(this).balance,"Please try again, Bankroll is out of Balance");
        uint amount = UserDetails[msg.sender];
